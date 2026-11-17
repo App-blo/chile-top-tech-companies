@@ -1,5 +1,5 @@
 // /api/v1/jobs.json: the open postings, today, at the companies the site lists
-// whose job board is known, kept to the ones a person in Spain could take.
+// whose job board is known, kept to the ones a person in Chile could take.
 // The MCP server's job tools search it, so an agent can apply without
 // installing anything. Postings only: titles, links, locations, stated pay,
 // and what api/_classify.js reads of each (roles and level from the title,
@@ -36,17 +36,18 @@ import { pathToFileURL } from "node:url";
 import { classify } from "../api/_classify.js";
 
 export const VERSION = 1;
-/** lib/ats location classes for an office in Spain, or remote from it.
- * Its "europe" is an office in another European country, or remote from one
- * of them, unless the place is Europe as a whole ("Home based - EMEA"). */
-const SPAIN_CLASSES = new Set(["spain", "remote-spain", "remote-europe"]);
+/** lib/ats location classes for an office in Chile, or remote from it or from
+ * Latin America as a whole. Its "latam" is an office in another Latin American
+ * country, or remote from one of them, unless the place is the region as a
+ * whole ("Home based - LATAM"). */
+const CHILE_CLASSES = new Set(["chile", "remote-chile", "remote-latam"]);
 /** An office that names no place, only remoteness: "Remote", "Distributed",
  * "Home based - Worldwide". lib/ats calls any remote office it cannot place
  * remote-global, "Remote India" and "Sydney" on a remote posting included. */
 const NO_PLACE = /^(?:remote|fully|100%|work|from|at|home|based|distributed|anywhere|worldwide|global|globally|virtual|wfh|flexible|international|[\s\-–—:,/()[\]&.])+$/i;
 const REMOTE_WORD = /remote|home|distributed|anywhere|worldwide|global|virtual|wfh/i;
 /** A title that scopes a placeless remote posting elsewhere. */
-const ELSEWHERE_TITLE = /\b(?:north america|americas|latam|apac|asia|us|usa|united states|canada|india|australia|japan|brazil|mexico)\b/i;
+const ELSEWHERE_TITLE = /\b(?:north america|emea|europe|apac|asia|us|usa|united states|canada|spain|uk|india|australia|japan|brazil|mexico|argentina|colombia)\b/i;
 const WORKPLACES = new Set(["remote", "hybrid", "onsite"]);
 const PERIODS = new Set(["year", "month", "hour"]);
 
@@ -114,15 +115,15 @@ const officesOf = (job) => job.locationsRaw.flatMap((v) => v.split(/\s*[;|]\s*/)
  * remote from that office, so it counts only when every office is placeless
  * or Europe-wide.
  */
-export function openToSpain(job, analyzeLocation) {
+export function openToChile(job, analyzeLocation) {
   const hints = { workplaceType: job.workplaceType };
   const offices = officesOf(job).map((office) => {
       const { locationClass, country } = analyzeLocation([office], hints);
       const placeless = NO_PLACE.test(office) && REMOTE_WORD.test(office);
-      const europeWide = locationClass === "europe" && country === "unknown";
+      const regionWide = locationClass === "latam" && country === "unknown";
       const remote = REMOTE_WORD.test(office) || job.workplaceType === "remote";
-      return { placeless, europeWide, raw: locationClass,
-               cls: placeless ? "remote-global" : europeWide && remote ? "remote-europe" : locationClass };
+      return { placeless, regionWide, raw: locationClass,
+               cls: placeless ? "remote-global" : regionWide && remote ? "remote-latam" : locationClass };
     });
   // job.locationClass is one office's class, or one lib/ats read from the
   // title or the board's published country, which the offices do not show.
@@ -131,9 +132,9 @@ export function openToSpain(job, analyzeLocation) {
   const fromElsewhere = !offices.some((o) => o.raw === job.locationClass)
     && !["other", "unknown"].includes(job.locationClass);
   const classes = [...new Set([...offices.map((o) => o.cls), ...(fromElsewhere ? [job.locationClass] : [])])];
-  if (offices.some((o) => SPAIN_CLASSES.has(o.cls))) return classes;
+  if (offices.some((o) => CHILE_CLASSES.has(o.cls))) return classes;
   if (["remote-us", "remote-canada"].includes(job.locationClass) || ELSEWHERE_TITLE.test(job.title)) return null;
-  const open = offices.some((o) => o.placeless) && offices.every((o) => o.placeless || o.europeWide);
+  const open = offices.some((o) => o.placeless) && offices.every((o) => o.placeless || o.regionWide);
   return open ? classes : null;
 }
 
@@ -152,7 +153,7 @@ function salary(comp) {
  * in Spain could take it. `location` is lib/ats's ranking/location module,
  * `known` the role slugs data.json has, which the posting's roles come from. */
 export function entry(job, board, slug, location, known = new Set()) {
-  const classes = openToSpain(job, location.analyzeLocation);
+  const classes = openToChile(job, location.analyzeLocation);
   if (!classes) return null;
   const row = {
     id: `${job.ats}:${job.board}:${job.externalId}`,

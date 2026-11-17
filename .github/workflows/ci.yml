@@ -35,6 +35,8 @@ jobs:
       # Offline: the boards are stubbed, the crawl runs only in deploys.
       - name: Job index
         run: node tests/jobs.test.mjs
+      - name: Chile locations
+        run: node tests/chile-location.test.mjs
 
       # companies.csv is private, so validate.py and site.py --refresh run on
       # the maintainer's Mac (scripts/weekly.sh); CI has the tests and the site,

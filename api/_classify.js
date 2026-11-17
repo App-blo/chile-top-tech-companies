@@ -1,5 +1,5 @@
 // What a job posting is: its likely roles, the level its title names, the years
-// of experience its text asks for, the Spanish regions its location names and
+// of experience its text asks for, the Chilean regions its location names and
 // the skills, tools, industries and spoken languages its text names.
 //
 // Shared by scripts/jobs.mjs, which stores these in /api/v1/jobs.json when it
@@ -25,29 +25,22 @@ export const words = (text) => norm(text)
 // unlike their capital or their region), and its main cities; "/" joins names of one city,
 // and the first is the one reported back.
 export const REGION_NAMES = {
-  AN: "Andalucía, Andalusia", AR: "Aragón, Aragon", AS: "Asturias", CB: "Cantabria",
-  CE: "Ceuta", CL: "Castilla y León, Castile and León", CM: "Castilla La Mancha, Castile La Mancha",
-  CN: "Canary Islands, Canarias", CT: "Catalunya, Catalonia, Cataluña", EX: "Extremadura",
-  GA: "Galicia", IB: "Balearic Islands, Illes Balears, Islas Baleares, Baleares",
-  MD: "Madrid, Comunidad de Madrid, Community of Madrid", ML: "Melilla",
-  MU: "Murcia, Región de Murcia, Region of Murcia", NC: "Navarra, Navarre",
-  PV: "Euskadi, Basque Country, País Vasco, Gipuzkoa, Guipúzcoa, Bizkaia, Vizcaya, Biscay, Álava, Araba", RI: "La Rioja",
-  VC: "Comunidad Valenciana, Comunitat Valenciana, Valencian Community, C. Valenciana",
+  AP: "Arica y Parinacota, Región de Arica y Parinacota", TA: "Tarapacá, Región de Tarapacá",
+  AN: "Región de Antofagasta", AT: "Atacama, Región de Atacama", CO: "Región de Coquimbo",
+  VS: "Región de Valparaíso, Valparaíso Region",
+  RM: "Región Metropolitana, Region Metropolitana de Santiago, Santiago Metropolitan Region, Metropolitan Region, RM",
+  LI: "O'Higgins, Región de O'Higgins, Libertador General Bernardo O'Higgins", ML: "Maule, Región del Maule",
+  NB: "Ñuble, Región de Ñuble", BI: "Biobío, Bío Bío, Región del Biobío", AR: "Araucanía, La Araucanía, Región de La Araucanía",
+  LR: "Los Ríos, Región de Los Ríos", LL: "Los Lagos, Región de Los Lagos",
+  AI: "Aysén, Aisén, Región de Aysén", MA: "Magallanes, Región de Magallanes",
 };
 export const CITIES = {
-  AN: "Sevilla/Seville, Málaga, Granada, Córdoba, Cádiz, Almería, Huelva, Jaén, Jerez, Marbella",
-  AR: "Zaragoza, Huesca, Teruel", AS: "Oviedo, Gijón", CB: "Santander", CE: "Ceuta",
-  CL: "Valladolid, León, Burgos, Salamanca, Segovia, Ávila, Soria, Palencia, Zamora",
-  CM: "Toledo, Albacete, Ciudad Real, Cuenca, Guadalajara",
-  CN: "Las Palmas/Las Palmas de Gran Canaria, Santa Cruz de Tenerife, Tenerife, Gran Canaria",
-  CT: "Barcelona, Girona/Gerona, Lleida/Lérida, Tarragona, Sabadell, Terrassa, Sant Cugat/Sant Cugat del Vallès",
-  EX: "Badajoz, Cáceres, Mérida",
-  GA: "A Coruña/La Coruña/Coruña, Vigo, Santiago de Compostela/Santiago, Pontevedra, Lugo, Ourense",
-  IB: "Palma/Palma de Mallorca, Mallorca/Majorca, Ibiza/Eivissa, Menorca",
-  MD: "Alcobendas, Las Rozas, Pozuelo/Pozuelo de Alarcón, Getafe, Tres Cantos",
-  ML: "Melilla", MU: "Cartagena", NC: "Pamplona/Iruña",
-  PV: "Bilbao, San Sebastián/Donostia/Donostia-San Sebastián, Vitoria/Vitoria-Gasteiz/Gasteiz",
-  RI: "Logroño", VC: "Valencia/València, Alicante/Alacant, Castellón/Castelló, Elche/Elx",
+  AP: "Arica", TA: "Iquique, Alto Hospicio", AN: "Antofagasta, Calama", AT: "Copiapó", CO: "La Serena, Coquimbo, Ovalle",
+  VS: "Viña del Mar, Valparaíso, Quilpué, Villa Alemana, San Antonio",
+  RM: "Santiago/Santiago de Chile, Las Condes, Providencia, Vitacura, Ñuñoa, Lo Barnechea, Huechuraba, Quilicura, Pudahuel, " +
+      "Maipú, La Florida, Puente Alto, San Miguel, Estación Central, Macul, Peñalolén, Recoleta, Independencia, Colina",
+  LI: "Rancagua", ML: "Talca, Curicó", NB: "Chillán", BI: "Concepción, Talcahuano, San Pedro de la Paz",
+  AR: "Temuco", LR: "Valdivia", LL: "Puerto Montt, Osorno, Puerto Varas", AI: "Coyhaique", MA: "Punta Arenas",
 };
 const split = (text, sep) => String(text ?? "").split(sep).map((x) => x.trim()).filter(Boolean);
 export const plainWords = (text) => norm(text).replace(/[^a-z0-9]+/g, " ").trim();
